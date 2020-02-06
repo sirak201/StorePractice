@@ -1,10 +1,39 @@
-const express = require('express')
-const path = require('path')
-const PORT = process.env.PORT || 5000
+const express = require("express");
+const path = require("path");
+const mongoose = require("mongoose");
+const config = require("./config");
+const PORT = process.env.PORT || config.port;
+const bodyParser = require("body-parser");
 
-express()
-  .use(express.static(path.join(__dirname, 'public')))
-  .set('views', path.join(__dirname, 'views'))
-  .set('view engine', 'ejs')
-  .get('/', (req, res) => res.render('pages/index'))
-  .listen(PORT, () => console.log(`Listening on ${ PORT }`))
+const connectRetry = function() {
+  mongoose.connect(
+    config.mongoUri,
+    {
+      useNewUrlParser: true,
+      useCreateIndex: true,
+      reconnectTries: 30,
+      reconnectInterval: 1000,
+      poolSize: 500
+    },
+    console.log(" Connected to mongoose sucessfull"),
+
+    err => {
+      if (err) {
+        console.log("Mongoose connection error:", err);
+        setTimeout(connectRetry, 5000);
+      }
+    }
+  );
+};
+
+connectRetry();
+
+const app = express();
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+
+app.use("/", (req, res) => {
+  res.send("Hello welcome");
+});
+
+app.listen(PORT, () => console.log(`Listening on ${PORT}`));
