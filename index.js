@@ -15,7 +15,7 @@ const connectRetry = function() {
       reconnectInterval: 1000,
       poolSize: 500
     },
-    console.log(" Connected to mongoose sucessfull"),
+    console.log(" Connected to mongoose sucessfull", config.mongoUri),
 
     err => {
       if (err) {
@@ -32,8 +32,10 @@ const app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-app.use("/", (req, res) => {
-  res.send("Hello welcome");
-});
+// app.use("/", (req, res) => {
+//   res.send("Hello welcome");
+// });
+
+app.use("/customer", require("./Api/customer"));
 
 app.listen(PORT, () => console.log(`Listening on ${PORT}`));
