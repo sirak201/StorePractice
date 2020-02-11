@@ -12,9 +12,6 @@ const BuyerSchema = new Schema({
 });
 
 BuyerSchema.methods.displayName = function() {
-  if (this.firstName === undefined || this.lastName === undefined) {
-    throw new Error("Input Proper name");
-  }
   return `${this.firstName} ${this.lastName.charAt(0)}`;
 };
 
@@ -92,8 +89,6 @@ BuyerSchema.statics.createBuyer = async function(object, callback) {
     const customerWithStripeId = await buyer.save();
     callback(customerWithStripeId);
   } catch (err) {
-    console.log("EROOOOR   toooook placee    ");
-    console.log("Here took place creating a customer", err);
     return callback(err);
   }
 };
